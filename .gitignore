@@ -3,3 +3,5 @@
 /data
 /evaluation
 /pix2pix-torchLight
+disc.pth.tar
+gen.pth.tar
