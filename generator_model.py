@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+'''
 class Block(nn.Module):
     def __init__(self, in_channels, out_channels, down=True, act="relu", use_dropout=False):
         super(Block, self).__init__()
@@ -22,6 +22,35 @@ class Block(nn.Module):
     def forward(self, x):
         x = self.conv(x)
         return self.dropout(x) if self.use_dropout else x
+'''    
+
+class Downsample(nn.Module):
+    def __init__(self, in_channels, out_channels) -> None:
+        super(Downsample, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=4, stride=2, padding=1, bias=False, padding_mode="reflect"),
+            nn.BatchNorm2d(out_channels),
+            nn.LeakyReLU(0.2)
+        )
+
+    def forward(self, x):
+        return self.conv(x)
+
+class Upsample(nn.Module):
+    def __init__(self, in_channels, out_channels, use_dropout=False) -> None:
+        super(Upsample, self).__init__()
+        self.conv = nn.Sequential(
+            nn.ConvTranspose2d(in_channels, out_channels, kernel_size=4, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU()
+        )
+        self.use_dropout = use_dropout
+        if self.use_dropout:
+            self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        x = self.conv(x)
+        return self.dropout(x) if self.use_dropout else x
     
 
 class Generator(nn.Module):
@@ -36,12 +65,12 @@ class Generator(nn.Module):
         )
 
         # encoder: C64-C128-C256-C512-C512-C512-C512-C512
-        self.down1 = Block(features  , features*2, down=True, act="leaky", use_dropout=False)#64
-        self.down2 = Block(features*2, features*4, down=True, act="leaky", use_dropout=False)#32
-        self.down3 = Block(features*4, features*8, down=True, act="leaky", use_dropout=False)#16
-        self.down4 = Block(features*8, features*8, down=True, act="leaky", use_dropout=False)#8
-        self.down5 = Block(features*8, features*8, down=True, act="leaky", use_dropout=False)#4
-        self.down6 = Block(features*8, features*8, down=True, act="leaky", use_dropout=False)#2
+        self.down1 = Downsample(features  , features*2) #64
+        self.down2 = Downsample(features*2, features*4) #32
+        self.down3 = Downsample(features*4, features*8) #16
+        self.down4 = Downsample(features*8, features*8) #8
+        self.down5 = Downsample(features*8, features*8) #4
+        self.down6 = Downsample(features*8, features*8) #2
         
         self.bottleneck = nn.Sequential(
             nn.Conv2d(features*8, features*8, kernel_size=4, stride=2, padding=1, padding_mode="reflect"), #1
@@ -50,13 +79,13 @@ class Generator(nn.Module):
         
         # decoder: CD512-CD512-CD512-C512-C256-C128-C64
         # in_channels*2: x,y <- concatenate these along the channels
-        self.up1 = Block(features*8  , features*8, down=False, act="relu", use_dropout=True) #2
-        self.up2 = Block(features*8*2, features*8, down=False, act="relu", use_dropout=True) #4
-        self.up3 = Block(features*8*2, features*8, down=False, act="relu", use_dropout=True) #8
-        self.up4 = Block(features*8*2, features*8, down=False, act="relu", use_dropout=False)#16
-        self.up5 = Block(features*8*2, features*4, down=False, act="relu", use_dropout=False)#32
-        self.up6 = Block(features*4*2, features*2, down=False, act="relu", use_dropout=False)#64
-        self.up7 = Block(features*2*2, features  , down=False, act="relu", use_dropout=False)#128
+        self.up1 = Upsample(features*8  , features*8, use_dropout=True) #2
+        self.up2 = Upsample(features*8*2, features*8, use_dropout=True) #4
+        self.up3 = Upsample(features*8*2, features*8, use_dropout=True) #8
+        self.up4 = Upsample(features*8*2, features*8, use_dropout=False)#16
+        self.up5 = Upsample(features*8*2, features*4, use_dropout=False)#32
+        self.up6 = Upsample(features*4*2, features*2, use_dropout=False)#64
+        self.up7 = Upsample(features*2*2, features  , use_dropout=False)#128
         
         # after last layer conv layer is applied to map to the number of output channels (3), followed by Tanh function
         self.final_up = nn.Sequential(

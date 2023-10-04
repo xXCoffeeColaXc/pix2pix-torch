@@ -15,7 +15,7 @@ class CNNBlock(nn.Module):
     
 
 class Discriminator(nn.Module):
-    def __init__(self, in_channels=3, features=[64,128,256,512]) -> None:
+    def __init__(self, in_channels=3, features=64) -> None:
         super().__init__()
 
         # dont we need weight init? weight_init: Gaussian(0,0.02), 
@@ -24,10 +24,19 @@ class Discriminator(nn.Module):
         # ReLU = LeakyReLU with a slope 0.2
         self.initial = nn.Sequential(
             # in_channels*2: x,y <- concatenate these along the channels
-            nn.Conv2d(in_channels*2 , features[0], kernel_size=4, stride=2, padding=1, padding_mode="reflect"),
+            nn.Conv2d(in_channels*2 , features, kernel_size=4, stride=2, padding=1, padding_mode="reflect"),
             nn.LeakyReLU(0.2)
         )
+        # C64-C128-C256-C512
+        self.conv1 = CNNBlock(features, features*2, stride=2)
+        self.conv2 = CNNBlock(features*2, features*4, stride=2)
+        self.conv3 = CNNBlock(features*4, features*8, stride=1)
+        
+        self.final_conv = nn.Sequential(
+            nn.Conv2d(features*8, 1, kernel_size=4, stride=1, padding=1, padding_mode="reflect")
+        )
 
+        '''
         # C64-C128-C256-C512
         layers = []
         in_channels = features[0]
@@ -43,13 +52,16 @@ class Discriminator(nn.Module):
         )
         
         self.model = nn.Sequential(*layers)
-
+        '''
 
     def forward(self, x, y):
         x = torch.cat([x,y], dim=1)
         x = self.initial(x)
-        x = self.model(x)
-        return x
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.conv3(x)
+        return self.final_conv(x)
+
     
 '''
 input: 3,256,256
