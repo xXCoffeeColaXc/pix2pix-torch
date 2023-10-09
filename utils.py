@@ -2,13 +2,26 @@ import torch
 import config
 from torchvision.utils import save_image
 
+def run_inference(gen ,val_loader, folder):
+    gen.eval()
+    with torch.no_grad():
+        for batch_idx, (x, y) in enumerate(val_loader):
+            x = x.to(config.DEVICE)
+            y_fake = gen(x)
+            y_fake = y_fake * 0.5 + 0.5  # remove normalization
+            x = x * 0.5 + 0.5 # remove normalization
+            concatenated_images = torch.cat((x, y_fake), dim=3) # Concatenate images along width
+            save_image(concatenated_images, folder + f"/y_gen_{batch_idx}.png")
+        
+
+
 def save_some_examples(gen, val_loader, epoch, folder):
     x, y = next(iter(val_loader))
     x, y = x.to(config.DEVICE), y.to(config.DEVICE)
     gen.eval()
     with torch.no_grad():
         y_fake = gen(x)
-        y_fake = y_fake * 0.5 + 0.5  # remove normalization#
+        y_fake = y_fake * 0.5 + 0.5  # remove normalization
         save_image(y_fake, folder + f"/y_gen_{epoch}.png")
         save_image(x * 0.5 + 0.5, folder + f"/input_{epoch}.png")
         if epoch == 1:
