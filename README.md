@@ -43,4 +43,4 @@ All hyperparameters used in this project can be found in the config file.
 
 ## Results
 
-![Description of Image](URL_TO_YOUR_IMAGE)
+![Left: Generated, Middle: Ground-truth, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/image.png)
