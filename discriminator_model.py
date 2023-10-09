@@ -20,6 +20,8 @@ class Discriminator(nn.Module):
 
         # dont we need weight init? weight_init: Gaussian(0,0.02), 
 
+        
+
         # first layer, no BatchNorm
         # ReLU = LeakyReLU with a slope 0.2
         self.initial = nn.Sequential(
@@ -61,6 +63,7 @@ class Discriminator(nn.Module):
         x = self.conv2(x)
         x = self.conv3(x)
         return self.final_conv(x)
+    
 
     
 '''

@@ -2,6 +2,7 @@
 /city_data
 /data
 /evaluation
+/results
 /pix2pix-torchLight
 disc.pth.tar
 gen.pth.tar
