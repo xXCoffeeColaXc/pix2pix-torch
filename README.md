@@ -45,7 +45,7 @@ Note: If a checkbox is checked, it indicates that the feature or enhancement has
 
 
 ## Results
-Left: Generated, Right: Semantic Mask
+Left: Semantic Mask, Right: Generated
 
 ![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_86.png)
 ![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_37.png)
