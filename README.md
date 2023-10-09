@@ -42,5 +42,11 @@ The discriminator architecture is as follows:
 All hyperparameters used in this project can be found in the config file.
 
 ## Results
+Left: Generated, Right: Semantic Mask
 
-![Left: Generated, Middle: Ground-truth, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/image.png)
+![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_86.png)
+![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_37.png)
+![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_39.png)
+![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_149.png)
+![Left: Generated, Right: Semantic Mask](https://github.com/xXCoffeeColaXc/pix2pix-torch/blob/master/cherry_picked_results/y_gen_142.png)
+
